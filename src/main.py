@@ -1,18 +1,20 @@
 import fastapi
 import uvicorn
 import os
-from dotenv import load_dotenv
-import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--dev", help="Run in development mode", action="store_true")
-args = parser.parse_args()
+from configs.env_vars import load_env_vars
+
+from routers import player_router
+
+from configs.db import get_db_connection
+
+load_env_vars()
+get_db_connection()
 
 app = fastapi.FastAPI()
+app.include_router(player_router.PlayerRouter)
 
 if __name__ == "__main__":
-    if args.dev:
-        load_dotenv()
     APP_HOST = os.environ.get("APP_HOST")
     APP_PORT = os.environ.get("APP_PORT")
 
