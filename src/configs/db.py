@@ -19,7 +19,7 @@ def create_session():
     print(DATABASE_URL)
 
     # Create Database Engine
-    Engine = create_engine(DATABASE_URL, echo=True, future=True)
+    Engine = create_engine(DATABASE_URL, echo=False, future=True)
 
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=Engine)
     return SessionLocal

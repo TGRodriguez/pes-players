@@ -15,3 +15,6 @@ class PlayerService:
 
     def get(self, player_id: int) -> Player:
         return self.player_repository.get(Player(id=player_id))
+
+    def get_with_filters(self, filters: dict) -> Player:
+        return self.player_repository.get_with_filters(filters)
