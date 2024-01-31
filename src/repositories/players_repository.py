@@ -9,6 +9,7 @@ from configs.db import (
 from models.player_model import Player
 from models.position_model import Position
 from models.player_face_model import PlayerFace
+from models.player_body_model import PlayerBody
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.expression import func
 
@@ -37,6 +38,10 @@ class PlayerRepository:
 
     def get_with_filters(self, filters: dict) -> Player:
         query = self.db.query(Player)
+        if "min_height" in filters or "max_height" in filters:
+            query = query.join(PlayerBody).options(
+                joinedload(Player.player_body_relationship)
+            )
 
         for attr, value in filters.items():
             if value is None or attr == "quantity":
@@ -53,6 +58,12 @@ class PlayerRepository:
                     .options(joinedload(Player.player_face_relationship))
                     .filter(getattr(PlayerFace, attr) == value)
                 )
+            elif attr == "min_height":
+                attr = "height"
+                query = query.filter(getattr(PlayerBody, attr) >= value)
+            elif attr == "max_height":
+                attr = "height"
+                query = query.filter(getattr(PlayerBody, attr) <= value)
             elif attr == "positions":
                 # Verificamos que el jugador tenga al menos todas
                 # las posiciones especificadas
