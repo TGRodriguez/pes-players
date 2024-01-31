@@ -9,6 +9,7 @@ from sqlalchemy.orm import relationship
 from models.base_model import EntityMeta
 from models.position_model import Position
 from models.player_face_model import PlayerFace
+from models.player_body_model import PlayerBody
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from models.player_position_model import (
@@ -38,6 +39,9 @@ class Player(EntityMeta):
     player_face_relationship = relationship(
         PlayerFace, back_populates="player", uselist=False
     )
+    player_body_relationship = relationship(
+        PlayerBody, back_populates="player", uselist=False
+    )
 
     # Relación muchos a muchos con la tabla player_positions
     favoured_positions = relationship(
@@ -65,4 +69,5 @@ class Player(EntityMeta):
                 for position in self.favoured_positions
             ],
             "skin_colour": self.player_face_relationship.skin_colour,
+            "height": self.player_body_relationship.height,
         }

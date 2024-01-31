@@ -8,6 +8,8 @@ class GetPlayerRequestSchema(BaseModel):
     id: Optional[int] = Field(Query(None, description="Player ID"))
     min_age: Optional[int] = Field(Query(None, description="Player minimum age"))
     max_age: Optional[int] = Field(Query(None, description="Player maximum age"))
+    min_height: Optional[int] = Field(Query(None, description="Player minimum height"))
+    max_height: Optional[int] = Field(Query(None, description="Player maximum height"))
     registered_position: Optional[str] = Field(
         Query(None, description="Player favoured position")
     )
