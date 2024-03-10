@@ -10,6 +10,8 @@ from models.base_model import EntityMeta
 from models.position_model import Position
 from models.player_face_model import PlayerFace
 from models.player_body_model import PlayerBody
+from models.player_stats_model import PlayerStats
+from models.player_teams_model import PlayerTeams
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from models.player_position_model import (
@@ -50,6 +52,14 @@ class Player(EntityMeta):
         back_populates="players",
     )
 
+    player_stats_relationship = relationship(
+        PlayerStats, back_populates="player", uselist=False
+    )
+
+    player_teams_relationship = relationship(
+        PlayerTeams, back_populates="player", uselist=False
+    )
+
     # Usar association_proxy para acceder a las posiciones favoritas directamente
     favoured_positions_names = association_proxy("favoured_positions", "position_name")
     favoured_positions_codes = association_proxy("favoured_positions", "position_code")
@@ -70,4 +80,9 @@ class Player(EntityMeta):
             ],
             "skin_colour": self.player_face_relationship.skin_colour,
             "height": self.player_body_relationship.height,
+            "average_stats": self.player_stats_relationship.average_stats,
+            "teams": {
+                "national_team": self.player_teams_relationship.national_team,
+                "club_team": self.player_teams_relationship.club_team,
+            },
         }
