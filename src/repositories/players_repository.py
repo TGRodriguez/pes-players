@@ -10,6 +10,8 @@ from models.player_model import Player
 from models.position_model import Position
 from models.player_face_model import PlayerFace
 from models.player_body_model import PlayerBody
+from models.player_teams_model import PlayerTeams
+from models.player_stats_model import PlayerStats
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.expression import func
 
@@ -38,13 +40,19 @@ class PlayerRepository:
 
     def get_with_filters(self, filters: dict) -> Player:
         query = self.db.query(Player)
+        if not filters["allow_classic_players"]:
+            query = query.join(PlayerTeams).options(
+                joinedload(Player.player_teams_relationship)
+            )
+            query = query.filter(PlayerTeams.national_team.notlike("%Classic%"))
+
         if "min_height" in filters or "max_height" in filters:
             query = query.join(PlayerBody).options(
                 joinedload(Player.player_body_relationship)
             )
 
         for attr, value in filters.items():
-            if value is None or attr == "quantity":
+            if value is None or attr == "quantity" or attr == "allow_classic_players":
                 continue
             if attr == "min_age":
                 attr = "age"
@@ -64,6 +72,14 @@ class PlayerRepository:
             elif attr == "max_height":
                 attr = "height"
                 query = query.filter(getattr(PlayerBody, attr) <= value)
+            elif attr == "min_average":
+                attr = "average_stats"
+                query = (
+                    query.join(PlayerStats)
+                    .options(joinedload(Player.player_stats_relationship))
+                    .filter(getattr(PlayerStats, attr) >= value)
+                )
+
             elif attr == "positions":
                 # Verificamos que el jugador tenga al menos todas
                 # las posiciones especificadas
