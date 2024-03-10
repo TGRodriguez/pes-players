@@ -10,6 +10,9 @@ class GetPlayerRequestSchema(BaseModel):
     max_age: Optional[int] = Field(Query(None, description="Player maximum age"))
     min_height: Optional[int] = Field(Query(None, description="Player minimum height"))
     max_height: Optional[int] = Field(Query(None, description="Player maximum height"))
+    min_average: Optional[int] = Field(
+        Query(None, description="Player minimum average stats")
+    )
     registered_position: Optional[str] = Field(
         Query(None, description="Player favoured position")
     )
@@ -19,3 +22,6 @@ class GetPlayerRequestSchema(BaseModel):
     strong_foot: Optional[str] = Field(Query(None, description="Player strong foot"))
     favoured_side: Optional[str] = Field(Query(None, description="Player favoured side"))
     skin_colour: Optional[int] = Field(Query(None, description="Player skin colour"))
+    allow_classic_players: Optional[bool] = Field(
+        Query(False, description="Allow classic players")
+    )
